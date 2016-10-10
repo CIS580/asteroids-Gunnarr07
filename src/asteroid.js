@@ -18,7 +18,7 @@ function Asteroid(position) {
 }
 
 /**
- * @function updates the player object
+ * @function updates the Asteroid object
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Asteroid.prototype.update = function(time) {
@@ -26,7 +26,7 @@ Asteroid.prototype.update = function(time) {
 }
 
 /**
- * @function renders the player into the provided context
+ * @function renders the Asteroid into the provided context
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  * {CanvasRenderingContext2D} ctx the context to render into
  */
