@@ -3,11 +3,18 @@
 /* Classes */
 const Game = require('./game.js');
 const Player = require('./player.js');
+const Asteroid = require('./asteroid');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
 var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas);
+
+var asteroids = [];
+
+for (var i = 0; i < 10; i++) {
+    asteroids.push(new Asteroid({x: Math.random() * canvas.width, y: Math.random() * canvas.height}));
+}
 
 /**
  * @function masterLoop
@@ -45,4 +52,7 @@ function render(elapsedTime, ctx) {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.render(elapsedTime, ctx);
+  asteroids.forEach(function(asteroid) {
+    asteroid.render(elapsedTime, ctx);
+  });
 }

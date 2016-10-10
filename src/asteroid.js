@@ -31,5 +31,9 @@ Asteroid.prototype.update = function(time) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 Asteroid.prototype.render = function(time, ctx) {
-
+    ctx.beginPath();
+    ctx.strokeStyle = 'grey';
+    // ctx.arc(100,75,50,0,2*Math.PI);
+    ctx.arc(100,75,50,0,2*Math.PI);
+    ctx.stroke();
 }

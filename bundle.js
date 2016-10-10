@@ -4,11 +4,18 @@
 /* Classes */
 const Game = require('./game.js');
 const Player = require('./player.js');
+const Asteroid = require('./asteroid');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
 var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas);
+
+var asteroids = [];
+
+for (var i = 0; i < 10; i++) {
+    asteroids.push(new Asteroid({x: Math.random() * canvas.width, y: Math.random() * canvas.height}));
+}
 
 /**
  * @function masterLoop
@@ -46,9 +53,52 @@ function render(elapsedTime, ctx) {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.render(elapsedTime, ctx);
+  asteroids.forEach(function(asteroid) {
+    asteroid.render(elapsedTime, ctx);
+  });
 }
 
-},{"./game.js":2,"./player.js":3}],2:[function(require,module,exports){
+},{"./asteroid":2,"./game.js":3,"./player.js":4}],2:[function(require,module,exports){
+"use strict";
+
+/**
+ * @module exports the asteroid class
+ */
+module.exports = exports = Asteroid;
+
+/**
+ * @constructor Asteroid
+ * Create a new Asteroid object
+ * @param {position} position object specifying an x and y
+ */
+function Asteroid(position) {
+    this.position = {
+        x: position.x,
+        y: position.y
+    }
+}
+
+/**
+ * @function updates the Asteroid object
+ * {DOMHighResTimeStamp} time the elapsed time since the last frame
+ */
+Asteroid.prototype.update = function(time) {
+
+}
+
+/**
+ * @function renders the Asteroid into the provided context
+ * {DOMHighResTimeStamp} time the elapsed time since the last frame
+ * {CanvasRenderingContext2D} ctx the context to render into
+ */
+Asteroid.prototype.render = function(time, ctx) {
+    ctx.beginPath();
+    ctx.strokeStyle = 'grey';
+    // ctx.arc(100,75,50,0,2*Math.PI);
+    ctx.arc(100,75,50,0,2*Math.PI);
+    ctx.stroke();
+}
+},{}],3:[function(require,module,exports){
 "use strict";
 
 /**
@@ -106,7 +156,7 @@ Game.prototype.loop = function(newTime) {
   this.frontCtx.drawImage(this.backBuffer, 0, 0);
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 const MS_PER_FRAME = 1000/8;
