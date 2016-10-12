@@ -13,7 +13,7 @@ var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas);
 var asteroids = [];
 
 for (var i = 0; i < 10; i++) {
-    asteroids.push(new Asteroid({x: Math.random() * canvas.width, y: Math.random() * canvas.height}));
+    asteroids.push(new Asteroid({x: Math.floor(Math.random() * (canvas.width - 1)), y: Math.floor(Math.random() * (canvas.height - 1))}, canvas));
 }
 
 /**
@@ -38,6 +38,9 @@ masterLoop(performance.now());
  */
 function update(elapsedTime) {
   player.update(elapsedTime);
+  asteroids.forEach(function(asteroid) {
+    asteroid.update();
+  });
   // TODO: Update the game objects
 }
 
