@@ -17,6 +17,7 @@ function Asteroid(position, canvas) {
         x: position.x,
         y: position.y
     };
+    this.mass = Math.random() * (20-10) + 10;
     this.velocity = {
         x: Math.random() * (2 + 2) - 2,
         y: Math.random() * (2 + 2) - 2
