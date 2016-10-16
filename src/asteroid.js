@@ -21,6 +21,7 @@ function Asteroid(position, canvas) {
         x: Math.random() * (2 + 2) - 2,
         y: Math.random() * (2 + 2) - 2
     };
+    this.mass = Math.random() * (10 - 5) + 5; // Random mass between min (inclusive) and max (exclusive)
     this.astroids = [];
     this.astroidL1 = new Image();
     this.astroidL1.src = 'assets/c10008.png';
