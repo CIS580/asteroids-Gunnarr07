@@ -66,9 +66,9 @@ Asteroid.prototype.render = function(time, ctx) {
         // Destination
         this.position.x, this.position.y, 64, 64
     );
-    // ctx.beginPath();
-    // ctx.strokeStyle = 'grey';
-    // // ctx.arc(100,75,50,0,2*Math.PI);
+    ctx.beginPath();
+    ctx.strokeStyle = 'grey';
     // ctx.arc(100,75,50,0,2*Math.PI);
-    // ctx.stroke();
+    ctx.arc(this.position.x + 32, this.position.y + 32, 32, 0, 2*Math.PI);
+    ctx.stroke();
 }

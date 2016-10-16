@@ -64,4 +64,6 @@ Sedan and Pickup art was provided by  [bahi](http://opengameart.org/users/bahi) 
 
 Astroid art was provided by [phaelax](http://opengameart.org/users/phaelax) of [Open Game Art](http://opengameart.org) under a CC-BY license.
 
+Background image was provided by [cuzco](http://opengameart.org/users/cuzco) of [Open Game Art](http://opengameart.org) under a CC-BY license.
+
 Game framework HTML5/CSS3/Javascript code was written by course instructor Nathan Bean, and released under a CC-BY license.
