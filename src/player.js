@@ -50,7 +50,7 @@ function Player(position, canvas, lasers) {
       case 'd':
         self.steerRight = true;
         break;
-      case 'v': 
+      case ' ':
         console.log("shotting laser");
         //self.lasers.push(new Laser(self.position, self.velocity, self.angle));
         //self.laser = new Laser(self.position, self.velocity, self.angle);
@@ -73,7 +73,7 @@ function Player(position, canvas, lasers) {
       case 'd':
         self.steerRight = false;
         break;
-      case 'SpaceBar':
+      case 'v ':
         self.shooting = false;
         break;
     }
@@ -88,7 +88,7 @@ function Player(position, canvas, lasers) {
  */
 Player.prototype.update = function(time) {
   if(this.shooting) {
-    this.lasers.push(new Laser(this.position, this.velocity, this.angle));
+    this.lasers.push(new Laser(this.position, {x: this.velocity.x + 1, y: this.velocity.y + 1}, this.angle));
     // this.lasers.forEach(function(laser) {
     //   laser.position.x = this.position.x;
     //   laser.position.y = this.position.y;
@@ -97,6 +97,7 @@ Player.prototype.update = function(time) {
     //   laser.angle = this.angle;
     // });
   }
+ 
   // Apply angular velocity
   if(this.steerLeft) {
     this.angle += 0.1;
@@ -130,11 +131,11 @@ Player.prototype.update = function(time) {
  */
 Player.prototype.render = function(time, ctx) {
   ctx.save();
-  if(this.shooting){
-    this.lasers.forEach(function(laser) {
-      laser.render();
-    });
-  }
+  // if(this.shooting){
+  //   this.lasers.forEach(function(laser) {
+  //     laser.render(time, ctx);
+  //   });
+  // }
 
 
   // Draw player's ship

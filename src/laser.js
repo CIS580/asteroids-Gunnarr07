@@ -14,14 +14,14 @@ function Laser(position, velocity, angle) { //position, velocity, angle
     // this.worldWidth = canvas.width;
     // this.worldHeight = canvas.height;
     this.position = {
-        x: 0,
-        y: 0
+        x: position.x,
+        y: position.y
     }
     this.velocity = {
-        x: 0,
-        y: 0
+        x: velocity.x,
+        y: velocity.y
     };
-    this.angle = 0;
+    this.angle = angle;
     this.width = 10;
     this.height = 20;
 }
@@ -31,7 +31,9 @@ function Laser(position, velocity, angle) { //position, velocity, angle
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Laser.prototype.update = function(time) {
-
+    // Apply velocity
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
 }
 
 /**

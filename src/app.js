@@ -68,7 +68,6 @@ var masterLoop = function(timestamp) {
 }
 masterLoop(performance.now());
 
-
 /**
  * @function update
  * Updates the game state, moving
@@ -79,7 +78,7 @@ masterLoop(performance.now());
  */
 function update(elapsedTime) {
   player.update(elapsedTime);
-  //lasers = player.return(lasers);
+  lasers = player.lasers;
   //entities.updateEntity(player);
   // asteroids.forEach(function(asteroid) {
   //   asteroid.update();
@@ -164,7 +163,7 @@ function update(elapsedTime) {
   * @param {CanvasRenderingContext2D} ctx the context to render to
   */
 function render(elapsedTime, ctx) {
-  // ctx.fillStyle = "black";
+  // ctx.fillStyle = "white";
   // ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.save();
   ctx.drawImage(
@@ -177,6 +176,8 @@ function render(elapsedTime, ctx) {
   );
 
   player.render(elapsedTime, ctx);
+
+  
   // asteroids.forEach(function(asteroid) {
   //   asteroid.render(elapsedTime, ctx);
   // });
