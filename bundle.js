@@ -136,19 +136,13 @@ function update(elapsedTime) {
         var m1 = pair.a.mass;
         var m2 = pair.b.mass;
         pair.b.velocity.x = (v2.x * ((m2 - m1) / (m2 + m1))) + (v1.x * ((2 * m1) / (m2 + m1)));
+        pair.b.velocity.y = (v2.y * ((m2 - m1) / (m2 + m1))) + (v1.y * ((2 * m1) / (m2 + m1)));
+
+        pair.a.velocity.x = (v1.x * ((m2 - m1) / (m2 + m1))) + (v2.x * ((2 * m1) / (m2 + m1)));
+        pair.a.velocity.y = (v1.y * ((m2 - m1) / (m2 + m1))) + (v2.y * ((2 * m1) / (m2 + m1)));
     }
 
-
-
-    // var rect1 = {x: 5, y: 5, width: 50, height: 50}
-    // var rect2 = {x: 20, y: 10, width: 10, height: 10}
-
-    // if (rect1.x < rect2.x + rect2.width &&
-    //   rect1.x + rect1.width > rect2.x &&
-    //   rect1.y < rect2.y + rect2.height &&
-    //   rect1.height + rect1.y > rect2.y) {
-    //     // collision detected!
-    // }
+    
   });
 
 
