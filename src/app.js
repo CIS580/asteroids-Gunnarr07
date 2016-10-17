@@ -12,8 +12,8 @@ var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
 var entities = new EntityManager(canvas.width, canvas.height, 96);
 
-var lasers = []
-lasers.push(new Laser());
+var lasers;
+//lasers.push(new Laser());
 var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas, lasers);
 
 
@@ -79,6 +79,7 @@ masterLoop(performance.now());
  */
 function update(elapsedTime) {
   player.update(elapsedTime);
+  //lasers = player.return(lasers);
   //entities.updateEntity(player);
   // asteroids.forEach(function(asteroid) {
   //   asteroid.update();

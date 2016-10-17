@@ -31,7 +31,8 @@ function Player(position, canvas, lasers) {
   this.steerLeft = false;
   this.steerRight = false;
   this.shooting = false;
-  this.lasers = lasers;
+  this.lasers = [];
+  //this.lasers = lasers;
   //this.lasers = new Laser(this.position, this.velocity, this.angle);
 
   var self = this;
@@ -87,13 +88,14 @@ function Player(position, canvas, lasers) {
  */
 Player.prototype.update = function(time) {
   if(this.shooting) {
-    this.lasers.forEach(function(laser) {
-      laser.position.x = this.position.x;
-      laser.position.y = this.position.y;
-      laser.velocity.x = this.velocity.x;
-      laser.velocity.y = this.velocity.y;
-      laser.angle = this.angle;
-    });
+    this.lasers.push(new Laser(this.position, this.velocity, this.angle));
+    // this.lasers.forEach(function(laser) {
+    //   laser.position.x = this.position.x;
+    //   laser.position.y = this.position.y;
+    //   laser.velocity.x = this.velocity.x;
+    //   laser.velocity.y = this.velocity.y;
+    //   laser.angle = this.angle;
+    // });
   }
   // Apply angular velocity
   if(this.steerLeft) {
@@ -128,10 +130,12 @@ Player.prototype.update = function(time) {
  */
 Player.prototype.render = function(time, ctx) {
   ctx.save();
-  if(this.shooting) this.laser.render();
-  // this.lasers.forEach(function(laser) {
-  //   laser.render();
-  // });
+  if(this.shooting){
+    this.lasers.forEach(function(laser) {
+      laser.render();
+    });
+  }
+
 
   // Draw player's ship
   ctx.translate(this.position.x, this.position.y);
