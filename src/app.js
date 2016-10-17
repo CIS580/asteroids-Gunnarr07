@@ -92,6 +92,64 @@ function update(elapsedTime) {
     if(asteriod.position.y > canvas.height) asteriod.position.y -= canvas.height;
   });
 
+  axisList.sort(function(a,b){return a.position.x - b.position.x});
+
+  var active = [];
+
+  var potentiallyColliding = [];
+
+  axisList.forEach(function(asteriod, aindex) {
+    active = active.filter(function(oasteriod) {
+      return asteriod.position.x -oasteriod.position.x < 30;
+    });
+    active.forEach(function(oasteriod, bindex) {
+      potentiallyColliding.push({a: oasteriod, b: asteriod});
+    });
+    active.push(asteriod);
+  });
+
+  var collisions = [];
+  potentiallyColliding.forEach(function(pair) {
+    var distSquared = 
+    Math.pow(pair.a.position.x - pair.b.position.x, 2) +
+    Math.pow(pair.a.position.y - pair.b.position.y, 2);
+    // (32 + 32)^2 = 4096 -> sum of two asteriodss' raidius squared
+    if(distSquared < Math.pow((pair.a.width / 2) + (pair.b.width / 2), 2)) {
+      collisions.push(pair);
+    }
+  });
+
+  // Check for collisions
+  collisions.forEach(function(pair) {
+    var circle1 = {radius: pair.a.width / 2, x: pair.a.position.x + pair.a.width, y: pair.a.position.y + pair.a.width};
+    var circle2 = {radius: pair.b.width / 2, x: pair.b.position.x + pair.b.width, y: pair.b.position.y + pair.b.width};
+
+    var dx = circle1.x - circle2.x;
+    var dy = circle1.y - circle2.y;
+    var distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < circle1.radius + circle2.radius) {
+        // collision detected!
+        var v1 = {x: pair.a.velocity.x, y: pair.a.velocity.y};
+        var v2 = {x: pair.b.velocity.x, y: pair.b.velocity.y};
+        var m1 = pair.a.mass;
+        var m2 = pair.b.mass;
+        pair.b.velocity.x = (v2.x * ((m2 - m1) / (m2 + m1))) + (v1.x * ((2 * m1) / (m2 + m1)));
+    }
+
+
+
+    // var rect1 = {x: 5, y: 5, width: 50, height: 50}
+    // var rect2 = {x: 20, y: 10, width: 10, height: 10}
+
+    // if (rect1.x < rect2.x + rect2.width &&
+    //   rect1.x + rect1.width > rect2.x &&
+    //   rect1.y < rect2.y + rect2.height &&
+    //   rect1.height + rect1.y > rect2.y) {
+    //     // collision detected!
+    // }
+  });
+
 
 
 
@@ -134,7 +192,6 @@ function render(elapsedTime, ctx) {
     );
     ctx.beginPath();
     ctx.strokeStyle = 'grey';
-    // ctx.arc(100,75,50,0,2*Math.PI);
     ctx.arc(asteriod.position.x + 32, asteriod.position.y + 32, 32, 0, 2*Math.PI);
     ctx.stroke();
   });
