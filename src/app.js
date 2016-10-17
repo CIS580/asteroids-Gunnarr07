@@ -191,5 +191,9 @@ function render(elapsedTime, ctx) {
     ctx.stroke();
   });
 
+  // lasers.forEach(function(laser) {
+  //   laser.update();
+  // });
+
   ctx.restore();
 }

@@ -192,6 +192,10 @@ function render(elapsedTime, ctx) {
     ctx.stroke();
   });
 
+  // lasers.forEach(function(laser) {
+  //   laser.update();
+  // });
+
   ctx.restore();
 }
 
@@ -529,7 +533,7 @@ function Player(position, canvas) {
   this.steerLeft = false;
   this.steerRight = false;
   this.shooting = false;
-  this.lasers = new Laser(this.position, this.velocity, this.angle);
+  //this.lasers = lasers;
 
   var self = this;
   window.onkeydown = function(event) {
@@ -549,7 +553,6 @@ function Player(position, canvas) {
       case 'v': 
         console.log("shotting laser");
         //self.lasers.push(new Laser(self.position, self.velocity, self.angle));
-        self.laser = new Laser(self.position, self.velocity, self.angle);
         self.shooting = true;
         break;
     }
@@ -575,8 +578,6 @@ function Player(position, canvas) {
     }
   }
 }
-
-
 
 /**
  * @function updates the player object
@@ -616,10 +617,6 @@ Player.prototype.update = function(time) {
  */
 Player.prototype.render = function(time, ctx) {
   ctx.save();
-  if(this.shooting) this.laser.render();
-  // this.lasers.forEach(function(laser) {
-  //   laser.render();
-  // });
 
   // Draw player's ship
   ctx.translate(this.position.x, this.position.y);
