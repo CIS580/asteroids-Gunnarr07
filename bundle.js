@@ -120,7 +120,7 @@ function update(elapsedTime) {
     }
   });
 
-  // Check for collisions
+  // Check for collisions with other asteriods
   collisions.forEach(function(pair) {
     var circle1 = {radius: pair.a.width / 2, x: pair.a.position.x + pair.a.width, y: pair.a.position.y + pair.a.width};
     var circle2 = {radius: pair.b.width / 2, x: pair.b.position.x + pair.b.width, y: pair.b.position.y + pair.b.width};
@@ -161,6 +161,7 @@ function update(elapsedTime) {
 function render(elapsedTime, ctx) {
   // ctx.fillStyle = "black";
   // ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
   ctx.drawImage(
     // Image
     background,
@@ -191,10 +192,10 @@ function render(elapsedTime, ctx) {
     ctx.stroke();
   });
 
-
+  ctx.restore();
 }
 
-},{"./asteroid":2,"./entity-manager":3,"./game.js":4,"./player.js":5}],2:[function(require,module,exports){
+},{"./asteroid":2,"./entity-manager":3,"./game.js":4,"./player.js":6}],2:[function(require,module,exports){
 "use strict";
 
 /**
@@ -451,7 +452,54 @@ Game.prototype.loop = function(newTime) {
 },{}],5:[function(require,module,exports){
 "use strict";
 
+/**
+ * @module exports the asteroid class
+ */
+module.exports = exports = Laser;
+
+/**
+ * @constructor Laser
+ * Create a new Laser object
+ * @param {position} position object specifying an x and y
+ */
+function Laser(position, velocity, angle) {
+    // this.worldWidth = canvas.width;
+    // this.worldHeight = canvas.height;
+    this.position = {
+        x: position.x,
+        y: position.y
+    }
+    this.velocity = {
+        x: velocity.x,
+        y: velocity.y
+    };
+    this.angle = angle;
+    this.width = 10;
+    this.height = 20;
+}
+
+/**
+ * @function updates the Laser object
+ * {DOMHighResTimeStamp} time the elapsed time since the last frame
+ */
+Laser.prototype.update = function(time) {
+
+}
+
+/**
+ * @function renders the Laser into the provided context
+ * {DOMHighResTimeStamp} time the elapsed time since the last frame
+ * {CanvasRenderingContext2D} ctx the context to render into
+ */
+Laser.prototype.render = function(time, ctx) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+}
+},{}],6:[function(require,module,exports){
+"use strict";
+
 const MS_PER_FRAME = 1000/8;
+const Laser = require('./laser');
 
 /**
  * @module exports the Player class
@@ -480,6 +528,8 @@ function Player(position, canvas) {
   this.thrusting = false;
   this.steerLeft = false;
   this.steerRight = false;
+  this.shooting = false;
+  this.lasers = new Laser(this.position, this.velocity, this.angle);
 
   var self = this;
   window.onkeydown = function(event) {
@@ -495,6 +545,12 @@ function Player(position, canvas) {
       case 'ArrowRight': // right
       case 'd':
         self.steerRight = true;
+        break;
+      case 'v': 
+        console.log("shotting laser");
+        //self.lasers.push(new Laser(self.position, self.velocity, self.angle));
+        self.laser = new Laser(self.position, self.velocity, self.angle);
+        self.shooting = true;
         break;
     }
   }
@@ -512,6 +568,9 @@ function Player(position, canvas) {
       case 'ArrowRight': // right
       case 'd':
         self.steerRight = false;
+        break;
+      case 'SpaceBar':
+        self.shooting = false;
         break;
     }
   }
@@ -557,6 +616,10 @@ Player.prototype.update = function(time) {
  */
 Player.prototype.render = function(time, ctx) {
   ctx.save();
+  if(this.shooting) this.laser.render();
+  // this.lasers.forEach(function(laser) {
+  //   laser.render();
+  // });
 
   // Draw player's ship
   ctx.translate(this.position.x, this.position.y);
@@ -583,4 +646,4 @@ Player.prototype.render = function(time, ctx) {
   ctx.restore();
 }
 
-},{}]},{},[1]);
+},{"./laser":5}]},{},[1]);

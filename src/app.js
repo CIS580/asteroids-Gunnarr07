@@ -119,7 +119,7 @@ function update(elapsedTime) {
     }
   });
 
-  // Check for collisions
+  // Check for collisions with other asteriods
   collisions.forEach(function(pair) {
     var circle1 = {radius: pair.a.width / 2, x: pair.a.position.x + pair.a.width, y: pair.a.position.y + pair.a.width};
     var circle2 = {radius: pair.b.width / 2, x: pair.b.position.x + pair.b.width, y: pair.b.position.y + pair.b.width};
@@ -160,6 +160,7 @@ function update(elapsedTime) {
 function render(elapsedTime, ctx) {
   // ctx.fillStyle = "black";
   // ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
   ctx.drawImage(
     // Image
     background,
@@ -190,5 +191,5 @@ function render(elapsedTime, ctx) {
     ctx.stroke();
   });
 
-
+  ctx.restore();
 }
