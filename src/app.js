@@ -5,12 +5,17 @@ const Game = require('./game.js');
 const EntityManager = require('./entity-manager');
 const Player = require('./player.js');
 const Asteroid = require('./asteroid');
+const Laser = require('./laser');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
 var entities = new EntityManager(canvas.width, canvas.height, 96);
-var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas);
+
+var lasers = []
+lasers.push(new Laser());
+var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas, lasers);
+
 
 var background = new Image();
 background.src = 'assets/bg5.png';

@@ -10,18 +10,18 @@ module.exports = exports = Laser;
  * Create a new Laser object
  * @param {position} position object specifying an x and y
  */
-function Laser(position, velocity, angle) {
+function Laser() { //position, velocity, angle
     // this.worldWidth = canvas.width;
     // this.worldHeight = canvas.height;
     this.position = {
-        x: position.x,
-        y: position.y
+        x: 0,
+        y: 0
     }
     this.velocity = {
-        x: velocity.x,
-        y: velocity.y
+        x: 0,
+        y: 0
     };
-    this.angle = angle;
+    this.angle = 0;
     this.width = 10;
     this.height = 20;
 }
