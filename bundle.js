@@ -6,12 +6,17 @@ const Game = require('./game.js');
 const EntityManager = require('./entity-manager');
 const Player = require('./player.js');
 const Asteroid = require('./asteroid');
+const Laser = require('./laser');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
 var entities = new EntityManager(canvas.width, canvas.height, 96);
-var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas);
+
+var lasers;
+//lasers.push(new Laser());
+var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas, lasers);
+
 
 var background = new Image();
 background.src = 'assets/bg5.png';
@@ -64,7 +69,6 @@ var masterLoop = function(timestamp) {
 }
 masterLoop(performance.now());
 
-
 /**
  * @function update
  * Updates the game state, moving
@@ -75,6 +79,7 @@ masterLoop(performance.now());
  */
 function update(elapsedTime) {
   player.update(elapsedTime);
+  lasers = player.lasers;
   //entities.updateEntity(player);
   // asteroids.forEach(function(asteroid) {
   //   asteroid.update();
@@ -159,7 +164,7 @@ function update(elapsedTime) {
   * @param {CanvasRenderingContext2D} ctx the context to render to
   */
 function render(elapsedTime, ctx) {
-  // ctx.fillStyle = "black";
+  // ctx.fillStyle = "white";
   // ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.save();
   ctx.drawImage(
@@ -172,6 +177,8 @@ function render(elapsedTime, ctx) {
   );
 
   player.render(elapsedTime, ctx);
+
+  
   // asteroids.forEach(function(asteroid) {
   //   asteroid.render(elapsedTime, ctx);
   // });
@@ -199,7 +206,7 @@ function render(elapsedTime, ctx) {
   ctx.restore();
 }
 
-},{"./asteroid":2,"./entity-manager":3,"./game.js":4,"./player.js":6}],2:[function(require,module,exports){
+},{"./asteroid":2,"./entity-manager":3,"./game.js":4,"./laser":5,"./player.js":6}],2:[function(require,module,exports){
 "use strict";
 
 /**
@@ -466,7 +473,7 @@ module.exports = exports = Laser;
  * Create a new Laser object
  * @param {position} position object specifying an x and y
  */
-function Laser(position, velocity, angle) {
+function Laser(position, velocity, angle) { //position, velocity, angle
     // this.worldWidth = canvas.width;
     // this.worldHeight = canvas.height;
     this.position = {
@@ -487,7 +494,9 @@ function Laser(position, velocity, angle) {
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Laser.prototype.update = function(time) {
-
+    // Apply velocity
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
 }
 
 /**
@@ -515,7 +524,7 @@ module.exports = exports = Player;
  * Creates a new player object
  * @param {Postition} position object specifying an x and y
  */
-function Player(position, canvas) {
+function Player(position, canvas, lasers) {
   this.worldWidth = canvas.width;
   this.worldHeight = canvas.height;
   this.state = "idle";
@@ -533,7 +542,13 @@ function Player(position, canvas) {
   this.steerLeft = false;
   this.steerRight = false;
   this.shooting = false;
+<<<<<<< HEAD
   //this.lasers = lasers;
+=======
+  this.lasers = [];
+  //this.lasers = lasers;
+  //this.lasers = new Laser(this.position, this.velocity, this.angle);
+>>>>>>> a13dc27c0ba007880e45f4efb404920711163f25
 
   var self = this;
   window.onkeydown = function(event) {
@@ -550,9 +565,13 @@ function Player(position, canvas) {
       case 'd':
         self.steerRight = true;
         break;
-      case 'v': 
+      case ' ':
         console.log("shotting laser");
         //self.lasers.push(new Laser(self.position, self.velocity, self.angle));
+<<<<<<< HEAD
+=======
+        //self.laser = new Laser(self.position, self.velocity, self.angle);
+>>>>>>> a13dc27c0ba007880e45f4efb404920711163f25
         self.shooting = true;
         break;
     }
@@ -572,7 +591,7 @@ function Player(position, canvas) {
       case 'd':
         self.steerRight = false;
         break;
-      case 'SpaceBar':
+      case 'v ':
         self.shooting = false;
         break;
     }
@@ -584,6 +603,17 @@ function Player(position, canvas) {
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Player.prototype.update = function(time) {
+  if(this.shooting) {
+    this.lasers.push(new Laser(this.position, {x: this.velocity.x + 1, y: this.velocity.y + 1}, this.angle));
+    // this.lasers.forEach(function(laser) {
+    //   laser.position.x = this.position.x;
+    //   laser.position.y = this.position.y;
+    //   laser.velocity.x = this.velocity.x;
+    //   laser.velocity.y = this.velocity.y;
+    //   laser.angle = this.angle;
+    // });
+  }
+ 
   // Apply angular velocity
   if(this.steerLeft) {
     this.angle += 0.1;
@@ -617,6 +647,15 @@ Player.prototype.update = function(time) {
  */
 Player.prototype.render = function(time, ctx) {
   ctx.save();
+<<<<<<< HEAD
+=======
+  // if(this.shooting){
+  //   this.lasers.forEach(function(laser) {
+  //     laser.render(time, ctx);
+  //   });
+  // }
+
+>>>>>>> a13dc27c0ba007880e45f4efb404920711163f25
 
   // Draw player's ship
   ctx.translate(this.position.x, this.position.y);

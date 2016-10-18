@@ -10,7 +10,7 @@ module.exports = exports = Laser;
  * Create a new Laser object
  * @param {position} position object specifying an x and y
  */
-function Laser(position, velocity, angle) {
+function Laser(position, velocity, angle) { //position, velocity, angle
     // this.worldWidth = canvas.width;
     // this.worldHeight = canvas.height;
     this.position = {
@@ -31,7 +31,9 @@ function Laser(position, velocity, angle) {
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Laser.prototype.update = function(time) {
-
+    // Apply velocity
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
 }
 
 /**
