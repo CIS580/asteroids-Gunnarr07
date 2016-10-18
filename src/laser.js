@@ -43,5 +43,5 @@ Laser.prototype.update = function(time) {
  */
 Laser.prototype.render = function(time, ctx) {
     ctx.fillStyle = "red";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
 }
