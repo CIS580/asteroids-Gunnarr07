@@ -23,7 +23,7 @@ function Laser(position, velocity, angle) { //position, velocity, angle
     };
     this.angle = angle;
     this.width = 5;
-    this.height = 10;
+    this.height = 5;
 }
 
 /**
@@ -31,8 +31,11 @@ function Laser(position, velocity, angle) { //position, velocity, angle
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Laser.prototype.update = function(time) {
-    // Apply velocity
 
+    // this.position.x += 0;
+    // this.position.y -= 3;
+
+    // Apply velocity
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
 }
@@ -45,8 +48,8 @@ Laser.prototype.update = function(time) {
 Laser.prototype.render = function(time, ctx) {
     ctx.save();
     ctx.fillStyle = "red";
-    ctx.translate(this.position.x, this.position.y);
-    ctx.rotate(-this.angle);
+    //ctx.translate(this.position.x, this.position.y);
+    //ctx.rotate(-this.angle);
     ctx.fillRect(this.position.x, this.position.y , this.width, this.height);
     ctx.restore();
 }

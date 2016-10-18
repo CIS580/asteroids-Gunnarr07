@@ -78,10 +78,8 @@ masterLoop(performance.now());
 function update(elapsedTime) {
   player.update(elapsedTime);
   lasers = player.lasers;
-  //entities.updateEntity(player);
-  // asteroids.forEach(function(asteroid) {
-  //   asteroid.update();
-  //   //entities.updateEntity(asteroid);
+  // lasers.forEach(function(laser) {
+  //   axisList.push(laser);
   // });
 
   asteroids.forEach(function(asteriod, index) {
@@ -104,7 +102,7 @@ function update(elapsedTime) {
 
   axisList.forEach(function(asteriod, aindex) {
     active = active.filter(function(oasteriod) {
-      return asteriod.position.x -oasteriod.position.x < 30;
+      return asteriod.position.x - oasteriod.position.x < 30;
     });
     active.forEach(function(oasteriod, bindex) {
       potentiallyColliding.push({a: oasteriod, b: asteriod});
@@ -150,7 +148,7 @@ function update(elapsedTime) {
           y: pair.a.position.y - pair.b.position.y
         }
         // Calculate the overlap between balls
-        var overlap = 32 - Vector.magnitude(collisionNormal);
+        var overlap = 66 - Vector.magnitude(collisionNormal);
         var collisionNormal = Vector.normalize(collisionNormal);
         pair.a.position.x += collisionNormal.x * overlap /2;
         pair.a.position.y += collisionNormal.y * overlap / 2;
@@ -179,6 +177,88 @@ function update(elapsedTime) {
         pair.b.velocity.x = b.x;
         pair.b.velocity.y = b.y;
     
+  });
+
+  lasers.forEach(function(laser, lindex) {
+    asteroids.forEach(function(asteriod, aindex) {
+      var circle1 = {radius: laser.width / 2, x: laser.position.x + laser.width, y: laser.position.y + laser.width};
+      var circle2 = {radius: asteriod.width / 2, x: asteriod.position.x + asteriod.width, y: asteriod.position.y + asteriod.width};
+
+      var dx = circle1.x - circle2.x;
+      var dy = circle1.y - circle2.y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < circle1.radius + circle2.radius) {
+          // collision detected!
+          if(asteriod.width == 64) {
+            var m = asteriod.mass / 2;
+            asteriod.mass  = m;
+            asteriod.width = 32;
+            asteriod.height = 32;
+            
+            // Remove laser
+            lasers.splice(lindex, 1);
+
+            // Explosion add smaller asteriods
+            asteroids.push({
+              asteriod: asteriod.asteriod,
+              position: { x: asteriod.position.x + 15, y: asteriod.position.y + 15 },
+              mass: m,
+              velocity: { x: asteriod.velocity.x, y: asteriod.velocity.y },
+              width: 32,
+              height: 32
+            });
+            asteroids.push({
+              asteriod: asteriod.asteriod,
+              position: { x: asteriod.position.x + 15, y: asteriod.position.y + 15 },
+              mass: m,
+              velocity: { x: asteriod.velocity.x, y: asteriod.velocity.y },
+              width: 32,
+              height: 32
+            });
+            axisList.push(asteroids[i]);
+            axisList.sort(function(a,b){return a.position.x - b.position.x});
+          }
+          else if(asteriod.width == 32) {
+            var m = asteriod.mass / 2;
+            asteriod.mass  = m;
+            asteriod.width = 16;
+            asteriod.height = 16;
+            lasers.splice(index, 1);
+            asteroids.push({
+              asteriod: asteriod.asteriod,
+              position: { x: asteriod.position.x + 15, y: asteriod.position.y + 15 },
+              mass: m,
+              velocity: { x: asteriod.velocity.x, y: asteriod.velocity.y },
+              width: 16,
+              height: 16
+            });
+            asteroids.push({
+              asteriod: asteriod.asteriod,
+              position: { x: asteriod.position.x + 15, y: asteriod.position.y + 15 },
+              mass: m,
+              velocity: { x: asteriod.velocity.x, y: asteriod.velocity.y },
+              width: 16,
+              height: 16
+            });
+            axisList.push(asteroids[i]);
+            axisList.sort(function(a,b){return a.position.x - b.position.x});
+          }
+          if(asteriod.width == 16) {
+            asteroids.splice(aindex, 1);
+          }
+        //   var v1 = {x: pair.a.velocity.x, y: pair.a.velocity.y};
+        //   var v2 = {x: pair.b.velocity.x, y: pair.b.velocity.y};
+        //   var m1 = pair.a.mass;
+        //   var m2 = pair.b.mass;
+        //   pair.b.velocity.x = (v2.x * ((m2 - m1) / (m2 + m1))) + (v1.x * ((2 * m1) / (m2 + m1)));
+        //   pair.b.velocity.y = (v2.y * ((m2 - m1) / (m2 + m1))) + (v1.y * ((2 * m1) / (m2 + m1)));
+
+        //   pair.a.velocity.x = (v1.x * ((m2 - m1) / (m2 + m1))) + (v2.x * ((2 * m1) / (m2 + m1)));
+        //   pair.a.velocity.y = (v1.y * ((m2 - m1) / (m2 + m1))) + (v2.y * ((2 * m1) / (m2 + m1)));
+      }
+    });
+
   });
 
 

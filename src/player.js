@@ -51,7 +51,9 @@ function Player(position, canvas, lasers) {
         break;
       case ' ':
         console.log("shotting laser");
-        self.lasers.push(new Laser(self.position, Vector.normalize(self.velocity), self.angle));//Vector.normalize(self.velocity), self.angle));//{x: self.velocity.x + 1, y: self.velocity.y + 1}, self.angle));
+        console.log(self.angle);
+        self.lasers.push(new Laser(self.position, Vector.rotate(self.velocity, self.angle), self.angle));
+        //self.lasers.push(new Laser(self.position, Vector.normalize(self.velocity), self.angle));//Vector.normalize(self.velocity), self.angle));//{x: self.velocity.x + 1, y: self.velocity.y + 1}, self.angle));
         self.shooting = true;
         break;
     }
