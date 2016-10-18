@@ -179,6 +179,7 @@ function update(elapsedTime) {
     
   });
 
+  // Check for collision between lasers and asteriods
   lasers.forEach(function(laser, lindex) {
     asteroids.forEach(function(asteriod, aindex) {
       var circle1 = {radius: laser.width / 2, x: laser.position.x + laser.width, y: laser.position.y + laser.width};
@@ -190,21 +191,21 @@ function update(elapsedTime) {
 
       if (distance < circle1.radius + circle2.radius) {
           // collision detected!
+          // Remove laser
+          lasers.splice(lindex, 1);
+
           if(asteriod.width == 64) {
             var m = asteriod.mass / 2;
             asteriod.mass  = m;
             asteriod.width = 32;
             asteriod.height = 32;
-            
-            // Remove laser
-            lasers.splice(lindex, 1);
 
             // Explosion add smaller asteriods
             asteroids.push({
               asteriod: asteriod.asteriod,
               position: { x: asteriod.position.x + 15, y: asteriod.position.y + 15 },
               mass: m,
-              velocity: { x: asteriod.velocity.x, y: asteriod.velocity.y },
+              velocity: { x: Math.random() * (2 + 2) - 2, y: Math.random() * (2 + 2) - 2 },
               width: 32,
               height: 32
             });
@@ -212,7 +213,7 @@ function update(elapsedTime) {
               asteriod: asteriod.asteriod,
               position: { x: asteriod.position.x + 15, y: asteriod.position.y + 15 },
               mass: m,
-              velocity: { x: asteriod.velocity.x, y: asteriod.velocity.y },
+              velocity: { x: Math.random() * (2 + 2) - 2, y: Math.random() * (2 + 2) - 2 },
               width: 32,
               height: 32
             });
@@ -224,7 +225,8 @@ function update(elapsedTime) {
             asteriod.mass  = m;
             asteriod.width = 16;
             asteriod.height = 16;
-            lasers.splice(index, 1);
+
+            // Explosion add smaller asteriods
             asteroids.push({
               asteriod: asteriod.asteriod,
               position: { x: asteriod.position.x + 15, y: asteriod.position.y + 15 },
@@ -244,24 +246,25 @@ function update(elapsedTime) {
             axisList.push(asteroids[i]);
             axisList.sort(function(a,b){return a.position.x - b.position.x});
           }
-          if(asteriod.width == 16) {
+          else if(asteriod.width == 16) {
             asteroids.splice(aindex, 1);
           }
-        //   var v1 = {x: pair.a.velocity.x, y: pair.a.velocity.y};
-        //   var v2 = {x: pair.b.velocity.x, y: pair.b.velocity.y};
-        //   var m1 = pair.a.mass;
-        //   var m2 = pair.b.mass;
-        //   pair.b.velocity.x = (v2.x * ((m2 - m1) / (m2 + m1))) + (v1.x * ((2 * m1) / (m2 + m1)));
-        //   pair.b.velocity.y = (v2.y * ((m2 - m1) / (m2 + m1))) + (v1.y * ((2 * m1) / (m2 + m1)));
-
-        //   pair.a.velocity.x = (v1.x * ((m2 - m1) / (m2 + m1))) + (v2.x * ((2 * m1) / (m2 + m1)));
-        //   pair.a.velocity.y = (v1.y * ((m2 - m1) / (m2 + m1))) + (v2.y * ((2 * m1) / (m2 + m1)));
       }
-    });
+    });// end asteriods
+  });// end laser detection
 
+  asteroids.forEach(function(asteriod) {
+    circle1 = {radius: player.width / 2, x: player.position.x + player.width, y: player.position.y + player.width};
+    circle2 = {radius: asteriod.width / 2, x: asteriod.position.x + asteriod.width, y: asteriod.position.y + asteriod.width};
+
+    dx = circle1.x - circle2.x;
+    dy = circle1.y - circle2.y;
+    distance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (distance < circle1.radius + circle2.radius) {
+      game.
+    }
   });
-
-
 
 
   // TODO: Update the game objects
