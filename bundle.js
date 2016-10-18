@@ -3,15 +3,14 @@
 
 /* Classes */
 const Game = require('./game.js');
-const EntityManager = require('./entity-manager');
 const Player = require('./player.js');
+const Vector = require('./vector');
 const Asteroid = require('./asteroid');
 const Laser = require('./laser');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
-var entities = new EntityManager(canvas.width, canvas.height, 96);
 
 var lasers;
 //lasers.push(new Laser());
@@ -127,15 +126,43 @@ function update(elapsedTime) {
 
   // Check for collisions with other asteriods
   collisions.forEach(function(pair) {
-    var circle1 = {radius: pair.a.width / 2, x: pair.a.position.x + pair.a.width, y: pair.a.position.y + pair.a.width};
-    var circle2 = {radius: pair.b.width / 2, x: pair.b.position.x + pair.b.width, y: pair.b.position.y + pair.b.width};
+    // var circle1 = {radius: pair.a.width / 2, x: pair.a.position.x + pair.a.width, y: pair.a.position.y + pair.a.width};
+    // var circle2 = {radius: pair.b.width / 2, x: pair.b.position.x + pair.b.width, y: pair.b.position.y + pair.b.width};
 
-    var dx = circle1.x - circle2.x;
-    var dy = circle1.y - circle2.y;
-    var distance = Math.sqrt(dx * dx + dy * dy);
+    // var dx = circle1.x - circle2.x;
+    // var dy = circle1.y - circle2.y;
+    // var distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance < circle1.radius + circle2.radius) {
-        // collision detected!
+    // if (distance < circle1.radius + circle2.radius) {
+    //     // collision detected!
+    //     var v1 = {x: pair.a.velocity.x, y: pair.a.velocity.y};
+    //     var v2 = {x: pair.b.velocity.x, y: pair.b.velocity.y};
+    //     var m1 = pair.a.mass;
+    //     var m2 = pair.b.mass;
+    //     pair.b.velocity.x = (v2.x * ((m2 - m1) / (m2 + m1))) + (v1.x * ((2 * m1) / (m2 + m1)));
+    //     pair.b.velocity.y = (v2.y * ((m2 - m1) / (m2 + m1))) + (v1.y * ((2 * m1) / (m2 + m1)));
+
+    //     pair.a.velocity.x = (v1.x * ((m2 - m1) / (m2 + m1))) + (v2.x * ((2 * m1) / (m2 + m1)));
+    //     pair.a.velocity.y = (v1.y * ((m2 - m1) / (m2 + m1))) + (v2.y * ((2 * m1) / (m2 + m1)));
+    // }
+        // Find the normal of collision
+        var collisionNormal = {
+          x: pair.a.position.x - pair.b.position.x,
+          y: pair.a.position.y - pair.b.position.y
+        }
+        // Calculate the overlap between balls
+        var overlap = 32 - Vector.magnitude(collisionNormal);
+        var collisionNormal = Vector.normalize(collisionNormal);
+        pair.a.position.x += collisionNormal.x * overlap /2;
+        pair.a.position.y += collisionNormal.y * overlap / 2;
+        pair.b.position.x -= collisionNormal.x * overlap / 2;
+        pair.b.position.y -= collisionNormal.y * overlap / 2;
+        // Rotate the problem space so that the normal
+        // of collision lies along the x-axis
+        var angle = Math.atan2(collisionNormal.y, collisionNormal.x);
+        var a = Vector.rotate(pair.a.velocity, angle);
+        var b = Vector.rotate(pair.b.velocity, angle);
+        // Solve the collision along the x-axis applling the vilosity equation
         var v1 = {x: pair.a.velocity.x, y: pair.a.velocity.y};
         var v2 = {x: pair.b.velocity.x, y: pair.b.velocity.y};
         var m1 = pair.a.mass;
@@ -145,8 +172,13 @@ function update(elapsedTime) {
 
         pair.a.velocity.x = (v1.x * ((m2 - m1) / (m2 + m1))) + (v2.x * ((2 * m1) / (m2 + m1)));
         pair.a.velocity.y = (v1.y * ((m2 - m1) / (m2 + m1))) + (v2.y * ((2 * m1) / (m2 + m1)));
-    }
-
+        // Rotate the problem space back to world space
+        a = Vector.rotate(a, -angle);
+        b = Vector.rotate(b, -angle);
+        pair.a.velocity.x = a.x;
+        pair.a.velocity.y = a.y;
+        pair.b.velocity.x = b.x;
+        pair.b.velocity.y = b.y;
     
   });
 
@@ -206,7 +238,7 @@ function render(elapsedTime, ctx) {
   ctx.restore();
 }
 
-},{"./asteroid":2,"./entity-manager":3,"./game.js":4,"./laser":5,"./player.js":6}],2:[function(require,module,exports){
+},{"./asteroid":2,"./game.js":3,"./laser":4,"./player.js":5,"./vector":6}],2:[function(require,module,exports){
 "use strict";
 
 /**
@@ -283,126 +315,6 @@ Asteroid.prototype.render = function(time, ctx) {
     ctx.stroke();
 }
 },{}],3:[function(require,module,exports){
-/* Entity-manager code from CIS580
- * Author: Nathan Bean
- * Used by: Jeremy Taylor
- * entity-manager.js
-*/
-
-module.exports = exports = EntityManager;
-
-function EntityManager(width, height, cellSize) {
-    this.cellSize = cellSize;
-    this.widthInCells = Math.ceil(width / cellSize);
-    this.heightInCells = Math.ceil(height / cellSize);
-    this.cells = [];
-    this.numberOfCells = this.widthInCells * this.heightInCells;
-    for (var i = 0; i < this.numberOfCells; i++) {
-        this.cells[i] = [];
-    }
-    this.cells[-1] = [];
-}
-
-function getIndex(x, y) {
-    var x = Math.floor(x / this.cellSize);
-    var y = Math.floor(y / this.cellSize);
-    if (x < 0 ||
-       x >= this.widthInCells ||
-       y < 0 ||
-       y >= this.heightInCells
-    ) return -1;
-    return y * this.widthInCells + x;
-}
-
-EntityManager.prototype.addEntity = function (entity) {
-    var index = getIndex.call(this, entity.x, entity.y);
-    this.cells[index].push(entity);
-    entity._cell = index;
-}
-
-EntityManager.prototype.updateEntity = function (entity) {
-    var index = getIndex.call(this, entity.x, entity.y);
-    // If we moved to a new cell, remove from old and add to new
-    if (index != entity._cell) {
-        var cellIndex = this.cells[entity._cell].indexOf(entity);
-        if (cellIndex != -1) this.cells[entity._cell].splice(cellIndex, 1);
-        this.cells[index].push(entity);
-        entity._cell = index;
-    }
-}
-
-EntityManager.prototype.removeEntity = function (entity) {
-    var cellIndex = this.cells[entity._cell].indexOf(entity);
-    if (cellIndex != -1) this.cells[entity._cell].splice(cellIndex, 1);
-    entity._cell = undefined;
-}
-
-EntityManager.prototype.collide = function (callback) {
-    var self = this;
-    this.cells.forEach(function (cell, i) {
-        // test for collisions
-        cell.forEach(function (entity1) {
-            // check for collisions with cellmates
-            cell.forEach(function (entity2) {
-                if (entity1 != entity2) checkForCollision(entity1, entity2, callback);
-
-                // check for collisions in cell to the right
-                if (i % (self.widthInCells - 1) != 0) {
-                    self.cells[i + 1].forEach(function (entity2) {
-                        checkForCollision(entity1, entity2, callback);
-                    });
-                }
-
-                // check for collisions in cell below
-                if (i < self.numberOfCells - self.widthInCells) {
-                    self.cells[i + self.widthInCells].forEach(function (entity2) {
-                        checkForCollision(entity1, entity2, callback);
-                    });
-                }
-
-                // check for collisions diagionally below and right
-                if (i < self.numberOfCells - self.withInCells && i % (self.widthInCells - 1) != 0) {
-                    self.cells[i + self.widthInCells + 1].forEach(function (entity2) {
-                        checkForCollision(entity1, entity2, callback);
-                    });
-                }
-            });
-        });
-    });
-}
-
-function checkForCollision(entity1, entity2, callback) {
-    var circle1 = {radius: 32, x: entity1.x + 32, y: entity1.y + 32}
-    var circle2 = {radius: 32, x: entity2 + 32, y: entity2.y + 32};
-
-    var dx = circle1.x - circle2.x;
-    var dy = circle1.y - circle2.y;
-    var distance = Math.sqrt(dx * dx + dy * dy);
-
-    // if (distance < circle1.radius + circle2.radius) {
-    //     // collision detected!
-    // }
-
-    var collides = !(distance < circle1.radius + circle2.radius);
-
-    // var collides = !(entity1.x + entity1.width < entity2.x ||
-    //                  entity1.x > entity2.x + entity2.width ||
-    //                  entity1.y + entity1.height < entity2.y ||
-    //                  entity1.y > entity2.y + entity2.height);
-    if (collides) {
-        callback(entity1, entity2);
-    }
-}
-
-EntityManager.prototype.renderCells = function (ctx) {
-    for (var x = 0; x < this.widthInCells; x++) {
-        for (var y = 0; y < this.heightInCells; y++) {
-            ctx.strokeStyle = '#333333';
-            ctx.strokeRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
-        }
-    }
-}
-},{}],4:[function(require,module,exports){
 "use strict";
 
 /**
@@ -460,7 +372,7 @@ Game.prototype.loop = function(newTime) {
   this.frontCtx.drawImage(this.backBuffer, 0, 0);
 }
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 /**
@@ -485,8 +397,8 @@ function Laser(position, velocity, angle) { //position, velocity, angle
         y: velocity.y
     };
     this.angle = angle;
-    this.width = 10;
-    this.height = 20;
+    this.width = 5;
+    this.height = 10;
 }
 
 /**
@@ -495,6 +407,7 @@ function Laser(position, velocity, angle) { //position, velocity, angle
  */
 Laser.prototype.update = function(time) {
     // Apply velocity
+
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
 }
@@ -505,14 +418,19 @@ Laser.prototype.update = function(time) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 Laser.prototype.render = function(time, ctx) {
+    ctx.save();
     ctx.fillStyle = "red";
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    ctx.translate(this.position.x, this.position.y);
+    ctx.rotate(-this.angle);
+    ctx.fillRect(this.position.x, this.position.y , this.width, this.height);
+    ctx.restore();
 }
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 const MS_PER_FRAME = 1000/8;
 const Laser = require('./laser');
+const Vector = require('./vector');
 
 /**
  * @module exports the Player class
@@ -561,6 +479,7 @@ function Player(position, canvas, lasers) {
         break;
       case ' ':
         console.log("shotting laser");
+        self.lasers.push(new Laser(self.position, Vector.normalize(self.velocity), self.angle));//Vector.normalize(self.velocity), self.angle));//{x: self.velocity.x + 1, y: self.velocity.y + 1}, self.angle));
         self.shooting = true;
         break;
     }
@@ -580,9 +499,6 @@ function Player(position, canvas, lasers) {
       case 'd':
         self.steerRight = false;
         break;
-      case 'v ':
-        self.shooting = false;
-        break;
     }
   }
 }
@@ -592,16 +508,19 @@ function Player(position, canvas, lasers) {
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Player.prototype.update = function(time) {
-  if(this.shooting) {
-    this.lasers.push(new Laser(this.position, {x: this.velocity.x + 1, y: this.velocity.y + 1}, this.angle));
-    // this.lasers.forEach(function(laser) {
-    //   laser.position.x = this.position.x;
-    //   laser.position.y = this.position.y;
-    //   laser.velocity.x = this.velocity.x;
-    //   laser.velocity.y = this.velocity.y;
-    //   laser.angle = this.angle;
-    // });
-  }
+  this.lasers.forEach(function(laser) {
+    laser.update();
+  });
+  // if(this.shooting) {
+  //   this.lasers.push(new Laser(this.position, {x: this.velocity.x + 1, y: this.velocity.y + 1}, this.angle));
+  //   // this.lasers.forEach(function(laser) {
+  //   //   laser.position.x = this.position.x;
+  //   //   laser.position.y = this.position.y;
+  //   //   laser.velocity.x = this.velocity.x;
+  //   //   laser.velocity.y = this.velocity.y;
+  //   //   laser.angle = this.angle;
+  //   // });
+  // }
  
   // Apply angular velocity
   if(this.steerLeft) {
@@ -636,12 +555,12 @@ Player.prototype.update = function(time) {
  */
 Player.prototype.render = function(time, ctx) {
   ctx.save();
-  if(this.shooting){
-    this.lasers.forEach(function(laser) {
-      laser.render(time, ctx);
-    });
-  }
+  this.lasers.forEach(function(laser) {
+    laser.render(time, ctx);
+  });
+  ctx.restore();
 
+  ctx.save();
   // Draw player's ship
   ctx.translate(this.position.x, this.position.y);
   ctx.rotate(-this.angle);
@@ -667,4 +586,33 @@ Player.prototype.render = function(time, ctx) {
   ctx.restore();
 }
 
-},{"./laser":5}]},{},[1]);
+},{"./laser":4,"./vector":6}],6:[function(require,module,exports){
+"use strict";
+
+module.exports = exports = {
+    rotate: rotate,
+    dotProduct: dotProduct,
+    magnitude: magnitude,
+    normalize: normalize
+}
+
+function rotate(a, angle) {
+    return {
+        x: a.x * Math.cos(angle) - a.y * Math.sin(angle),
+        y: a.x * Math.sin(angle) + a.y * Math.cos(angle)
+    };
+}
+
+function dotProduct(a, b) {
+    return a.x * b.x + a.y * b.y;
+}
+
+function magnitude(a) {
+    return Math.sqrt(a.x * a.x + a.y * a.y);
+}
+
+function normalize(a) {
+    var mag = magnitude(a);
+    return {x: a.x / mag, y: a.y / mag};
+}
+},{}]},{},[1]);

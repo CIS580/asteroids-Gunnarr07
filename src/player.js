@@ -2,6 +2,7 @@
 
 const MS_PER_FRAME = 1000/8;
 const Laser = require('./laser');
+const Vector = require('./vector');
 
 /**
  * @module exports the Player class
@@ -50,6 +51,7 @@ function Player(position, canvas, lasers) {
         break;
       case ' ':
         console.log("shotting laser");
+        self.lasers.push(new Laser(self.position, Vector.normalize(self.velocity), self.angle));//Vector.normalize(self.velocity), self.angle));//{x: self.velocity.x + 1, y: self.velocity.y + 1}, self.angle));
         self.shooting = true;
         break;
     }
@@ -69,9 +71,6 @@ function Player(position, canvas, lasers) {
       case 'd':
         self.steerRight = false;
         break;
-      case 'v ':
-        self.shooting = false;
-        break;
     }
   }
 }
@@ -81,16 +80,19 @@ function Player(position, canvas, lasers) {
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Player.prototype.update = function(time) {
-  if(this.shooting) {
-    this.lasers.push(new Laser(this.position, {x: this.velocity.x + 1, y: this.velocity.y + 1}, this.angle));
-    // this.lasers.forEach(function(laser) {
-    //   laser.position.x = this.position.x;
-    //   laser.position.y = this.position.y;
-    //   laser.velocity.x = this.velocity.x;
-    //   laser.velocity.y = this.velocity.y;
-    //   laser.angle = this.angle;
-    // });
-  }
+  this.lasers.forEach(function(laser) {
+    laser.update();
+  });
+  // if(this.shooting) {
+  //   this.lasers.push(new Laser(this.position, {x: this.velocity.x + 1, y: this.velocity.y + 1}, this.angle));
+  //   // this.lasers.forEach(function(laser) {
+  //   //   laser.position.x = this.position.x;
+  //   //   laser.position.y = this.position.y;
+  //   //   laser.velocity.x = this.velocity.x;
+  //   //   laser.velocity.y = this.velocity.y;
+  //   //   laser.angle = this.angle;
+  //   // });
+  // }
  
   // Apply angular velocity
   if(this.steerLeft) {
@@ -125,12 +127,12 @@ Player.prototype.update = function(time) {
  */
 Player.prototype.render = function(time, ctx) {
   ctx.save();
-  if(this.shooting){
-    this.lasers.forEach(function(laser) {
-      laser.render(time, ctx);
-    });
-  }
+  this.lasers.forEach(function(laser) {
+    laser.render(time, ctx);
+  });
+  ctx.restore();
 
+  ctx.save();
   // Draw player's ship
   ctx.translate(this.position.x, this.position.y);
   ctx.rotate(-this.angle);

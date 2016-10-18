@@ -22,8 +22,8 @@ function Laser(position, velocity, angle) { //position, velocity, angle
         y: velocity.y
     };
     this.angle = angle;
-    this.width = 10;
-    this.height = 20;
+    this.width = 5;
+    this.height = 10;
 }
 
 /**
@@ -32,6 +32,7 @@ function Laser(position, velocity, angle) { //position, velocity, angle
  */
 Laser.prototype.update = function(time) {
     // Apply velocity
+
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
 }
@@ -42,6 +43,10 @@ Laser.prototype.update = function(time) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 Laser.prototype.render = function(time, ctx) {
+    ctx.save();
     ctx.fillStyle = "red";
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    ctx.translate(this.position.x, this.position.y);
+    ctx.rotate(-this.angle);
+    ctx.fillRect(this.position.x, this.position.y , this.width, this.height);
+    ctx.restore();
 }

@@ -2,15 +2,14 @@
 
 /* Classes */
 const Game = require('./game.js');
-const EntityManager = require('./entity-manager');
 const Player = require('./player.js');
+const Vector = require('./vector');
 const Asteroid = require('./asteroid');
 const Laser = require('./laser');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
-var entities = new EntityManager(canvas.width, canvas.height, 96);
 
 var lasers;
 //lasers.push(new Laser());
@@ -126,15 +125,43 @@ function update(elapsedTime) {
 
   // Check for collisions with other asteriods
   collisions.forEach(function(pair) {
-    var circle1 = {radius: pair.a.width / 2, x: pair.a.position.x + pair.a.width, y: pair.a.position.y + pair.a.width};
-    var circle2 = {radius: pair.b.width / 2, x: pair.b.position.x + pair.b.width, y: pair.b.position.y + pair.b.width};
+    // var circle1 = {radius: pair.a.width / 2, x: pair.a.position.x + pair.a.width, y: pair.a.position.y + pair.a.width};
+    // var circle2 = {radius: pair.b.width / 2, x: pair.b.position.x + pair.b.width, y: pair.b.position.y + pair.b.width};
 
-    var dx = circle1.x - circle2.x;
-    var dy = circle1.y - circle2.y;
-    var distance = Math.sqrt(dx * dx + dy * dy);
+    // var dx = circle1.x - circle2.x;
+    // var dy = circle1.y - circle2.y;
+    // var distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance < circle1.radius + circle2.radius) {
-        // collision detected!
+    // if (distance < circle1.radius + circle2.radius) {
+    //     // collision detected!
+    //     var v1 = {x: pair.a.velocity.x, y: pair.a.velocity.y};
+    //     var v2 = {x: pair.b.velocity.x, y: pair.b.velocity.y};
+    //     var m1 = pair.a.mass;
+    //     var m2 = pair.b.mass;
+    //     pair.b.velocity.x = (v2.x * ((m2 - m1) / (m2 + m1))) + (v1.x * ((2 * m1) / (m2 + m1)));
+    //     pair.b.velocity.y = (v2.y * ((m2 - m1) / (m2 + m1))) + (v1.y * ((2 * m1) / (m2 + m1)));
+
+    //     pair.a.velocity.x = (v1.x * ((m2 - m1) / (m2 + m1))) + (v2.x * ((2 * m1) / (m2 + m1)));
+    //     pair.a.velocity.y = (v1.y * ((m2 - m1) / (m2 + m1))) + (v2.y * ((2 * m1) / (m2 + m1)));
+    // }
+        // Find the normal of collision
+        var collisionNormal = {
+          x: pair.a.position.x - pair.b.position.x,
+          y: pair.a.position.y - pair.b.position.y
+        }
+        // Calculate the overlap between balls
+        var overlap = 32 - Vector.magnitude(collisionNormal);
+        var collisionNormal = Vector.normalize(collisionNormal);
+        pair.a.position.x += collisionNormal.x * overlap /2;
+        pair.a.position.y += collisionNormal.y * overlap / 2;
+        pair.b.position.x -= collisionNormal.x * overlap / 2;
+        pair.b.position.y -= collisionNormal.y * overlap / 2;
+        // Rotate the problem space so that the normal
+        // of collision lies along the x-axis
+        var angle = Math.atan2(collisionNormal.y, collisionNormal.x);
+        var a = Vector.rotate(pair.a.velocity, angle);
+        var b = Vector.rotate(pair.b.velocity, angle);
+        // Solve the collision along the x-axis applling the vilosity equation
         var v1 = {x: pair.a.velocity.x, y: pair.a.velocity.y};
         var v2 = {x: pair.b.velocity.x, y: pair.b.velocity.y};
         var m1 = pair.a.mass;
@@ -144,8 +171,13 @@ function update(elapsedTime) {
 
         pair.a.velocity.x = (v1.x * ((m2 - m1) / (m2 + m1))) + (v2.x * ((2 * m1) / (m2 + m1)));
         pair.a.velocity.y = (v1.y * ((m2 - m1) / (m2 + m1))) + (v2.y * ((2 * m1) / (m2 + m1)));
-    }
-
+        // Rotate the problem space back to world space
+        a = Vector.rotate(a, -angle);
+        b = Vector.rotate(b, -angle);
+        pair.a.velocity.x = a.x;
+        pair.a.velocity.y = a.y;
+        pair.b.velocity.x = b.x;
+        pair.b.velocity.y = b.y;
     
   });
 
