@@ -10,6 +10,8 @@ const Asteroid = require('./asteroid');
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
+var level = 1;
+var score = 0;
 
 var lasers;
 var explosion = new Audio();
@@ -149,6 +151,7 @@ function update(elapsedTime) {
       pair.a.velocity.y = a.y;
       pair.b.velocity.x = b.x;
       pair.b.velocity.y = b.y;
+      explosion2.play();
   });
 
   // Check for collision between lasers and asteriods
@@ -167,6 +170,9 @@ function update(elapsedTime) {
 
         if (distance < circle1.radius + circle2.radius) {
             // collision detected!
+            explosion.play();
+            score++;
+            game.stats.innerHTML = "Score: " + score + " Level: " + level;
             // Remove laser
             var ast;
             lasers.splice(lindex, 1);
@@ -199,8 +205,9 @@ function update(elapsedTime) {
               asteroids.push(ast);
               axisList.push(ast);
               axisList.sort(function(a,b){return a.position.x - b.position.x});
+              return;
             }
-            else if(asteriod.width == 32) {
+            if(asteriod.width == 32) {
               var m = asteriod.mass / 2;
               asteriod.mass  = m;
               asteriod.width = 16;
@@ -229,11 +236,10 @@ function update(elapsedTime) {
               asteroids.push(ast);
               axisList.push(ast);
               axisList.sort(function(a,b){return a.position.x - b.position.x});
+              return;
             }
-            else if(asteriod.width == 16) {
-              console.log("lenb: ", asteroids.length);
+            if(asteriod.width == 16) {
               asteroids.splice(aindex, 1);
-              console.log("lena: ", asteroids.length);
             }
         }
       });// end asteriods
@@ -260,14 +266,18 @@ function update(elapsedTime) {
 
   // TODO: Update the game objects
   console.log("len: ", asteroids.length);
-  if(asteroids.length == 31){
+  if(score >= 20  && level == 1 || asteroids.length >= 23 && level == 1){
+    level = 2;
+    game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
     axisList = [];
     var level2 = Asteroid.level2(canvas);
     asteroids = level2.asteroids;
     axisList = level2.axisList;
   }
-  if(asteroids.length == 91){
+  if(score >= 40 && level == 2 || asteroids.length >= 90 && level == 2){
+    level = 3;
+    game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
     axisList = [];
     var level3 = Asteroid.level2(canvas);
@@ -334,6 +344,9 @@ var asteroid3 = new Image();
 asteroid3.src = 'assets/c40009.png';
 asteroidTypes.push(asteroid3);
 
+/**
+ * The first round of asteriods
+ */
 function level1(canvas) {
     for(var i = 0; i < 5; i++) {
         asteroids.push({
@@ -349,6 +362,9 @@ function level1(canvas) {
     return {asteroids: asteroids, axisList: axisList};
 }
 
+/**
+ * The second round of asteriods
+ */
 function level2(canvas) {
     for(var i = 0; i < 10; i++) {
         asteroids.push({
@@ -364,6 +380,9 @@ function level2(canvas) {
     return {asteroids: asteroids, axisList: axisList};
 }
 
+/**
+ * The third round of asteriods
+ */
 function level3(canvas) {
     for(var i = 0; i < 10; i++) {
         asteroids.push({
@@ -408,6 +427,7 @@ function Game(screen, updateFunction, renderFunction) {
   // Start the game loop
   this.oldTime = performance.now();
   this.paused = false;
+  this.stats = document.getElementById('stats');
 }
 
 /**
@@ -528,6 +548,7 @@ function Player(position, canvas, lasers) {
   this.steerRight = false;
   this.shooting = false;
   this.lasers = [];
+  this.shield = false;
   var shootLaser = new Audio();
   shootLaser.src = 'assets/Laser_Shoot.wav';
 
@@ -547,11 +568,12 @@ function Player(position, canvas, lasers) {
         self.steerRight = true;
         break;
       case ' ':
-        console.log("shotting laser");
-        console.log(self.angle);
         self.lasers.push(new Laser(self.position, Vector.rotate(self.velocity, self.angle), self.angle));
         shootLaser.play();
         self.shooting = true;
+        break;
+      case 'g':
+        self.shield = true;
         break;
     }
   }
@@ -569,6 +591,9 @@ function Player(position, canvas, lasers) {
       case 'ArrowRight': // right
       case 'd':
         self.steerRight = false;
+        break;
+      case 'g':
+        self.shield = false;
         break;
     }
   }
@@ -650,14 +675,17 @@ Player.prototype.render = function(time, ctx) {
   ctx.fillStyle ='red'
   ctx.fillRect(this.position.x, this.position.y , 5, 5);
 
-  ctx.beginPath();
-  ctx.strokeStyle = 'green';
-  ctx.arc(this.position.x, this.position.y, 15, 0, 2*Math.PI);
-  ctx.stroke();
-  // ctx.beginPath();
-  // ctx.strokeStyle = 'green';
-  // ctx.arc(this.position.x, this.position.y, 16, 0, 2*Math.PI);
-  // ctx.stroke();
+  if(this.shield) {
+    ctx.beginPath();
+    ctx.strokeStyle = 'green';
+    ctx.arc(this.position.x, this.position.y, 15, 0, 2*Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = 'green';
+    ctx.arc(this.position.x, this.position.y, 16, 0, 2*Math.PI);
+    ctx.stroke();
+  }
+
 }
 
 },{"./laser":4,"./vector":6}],6:[function(require,module,exports){

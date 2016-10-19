@@ -33,6 +33,7 @@ function Player(position, canvas, lasers) {
   this.steerRight = false;
   this.shooting = false;
   this.lasers = [];
+  this.shield = false;
   var shootLaser = new Audio();
   shootLaser.src = 'assets/Laser_Shoot.wav';
 
@@ -52,11 +53,12 @@ function Player(position, canvas, lasers) {
         self.steerRight = true;
         break;
       case ' ':
-        console.log("shotting laser");
-        console.log(self.angle);
         self.lasers.push(new Laser(self.position, Vector.rotate(self.velocity, self.angle), self.angle));
         shootLaser.play();
         self.shooting = true;
+        break;
+      case 'g':
+        self.shield = true;
         break;
     }
   }
@@ -74,6 +76,9 @@ function Player(position, canvas, lasers) {
       case 'ArrowRight': // right
       case 'd':
         self.steerRight = false;
+        break;
+      case 'g':
+        self.shield = false;
         break;
     }
   }
@@ -155,12 +160,15 @@ Player.prototype.render = function(time, ctx) {
   ctx.fillStyle ='red'
   ctx.fillRect(this.position.x, this.position.y , 5, 5);
 
-  ctx.beginPath();
-  ctx.strokeStyle = 'green';
-  ctx.arc(this.position.x, this.position.y, 15, 0, 2*Math.PI);
-  ctx.stroke();
-  // ctx.beginPath();
-  // ctx.strokeStyle = 'green';
-  // ctx.arc(this.position.x, this.position.y, 16, 0, 2*Math.PI);
-  // ctx.stroke();
+  if(this.shield) {
+    ctx.beginPath();
+    ctx.strokeStyle = 'green';
+    ctx.arc(this.position.x, this.position.y, 15, 0, 2*Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = 'green';
+    ctx.arc(this.position.x, this.position.y, 16, 0, 2*Math.PI);
+    ctx.stroke();
+  }
+
 }

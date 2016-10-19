@@ -27,6 +27,7 @@ function Game(screen, updateFunction, renderFunction) {
   // Start the game loop
   this.oldTime = performance.now();
   this.paused = false;
+  this.stats = document.getElementById('stats');
 }
 
 /**

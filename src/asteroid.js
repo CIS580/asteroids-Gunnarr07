@@ -21,6 +21,9 @@ var asteroid3 = new Image();
 asteroid3.src = 'assets/c40009.png';
 asteroidTypes.push(asteroid3);
 
+/**
+ * The first round of asteriods
+ */
 function level1(canvas) {
     for(var i = 0; i < 5; i++) {
         asteroids.push({
@@ -36,6 +39,9 @@ function level1(canvas) {
     return {asteroids: asteroids, axisList: axisList};
 }
 
+/**
+ * The second round of asteriods
+ */
 function level2(canvas) {
     for(var i = 0; i < 10; i++) {
         asteroids.push({
@@ -51,6 +57,9 @@ function level2(canvas) {
     return {asteroids: asteroids, axisList: axisList};
 }
 
+/**
+ * The third round of asteriods
+ */
 function level3(canvas) {
     for(var i = 0; i < 10; i++) {
         asteroids.push({

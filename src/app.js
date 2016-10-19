@@ -9,6 +9,8 @@ const Asteroid = require('./asteroid');
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
+var level = 1;
+var score = 0;
 
 var lasers;
 var explosion = new Audio();
@@ -148,6 +150,7 @@ function update(elapsedTime) {
       pair.a.velocity.y = a.y;
       pair.b.velocity.x = b.x;
       pair.b.velocity.y = b.y;
+      explosion2.play();
   });
 
   // Check for collision between lasers and asteriods
@@ -166,6 +169,9 @@ function update(elapsedTime) {
 
         if (distance < circle1.radius + circle2.radius) {
             // collision detected!
+            explosion.play();
+            score++;
+            game.stats.innerHTML = "Score: " + score + " Level: " + level;
             // Remove laser
             var ast;
             lasers.splice(lindex, 1);
@@ -198,8 +204,9 @@ function update(elapsedTime) {
               asteroids.push(ast);
               axisList.push(ast);
               axisList.sort(function(a,b){return a.position.x - b.position.x});
+              return;
             }
-            else if(asteriod.width == 32) {
+            if(asteriod.width == 32) {
               var m = asteriod.mass / 2;
               asteriod.mass  = m;
               asteriod.width = 16;
@@ -228,11 +235,10 @@ function update(elapsedTime) {
               asteroids.push(ast);
               axisList.push(ast);
               axisList.sort(function(a,b){return a.position.x - b.position.x});
+              return;
             }
-            else if(asteriod.width == 16) {
-              console.log("lenb: ", asteroids.length);
+            if(asteriod.width == 16) {
               asteroids.splice(aindex, 1);
-              console.log("lena: ", asteroids.length);
             }
         }
       });// end asteriods
@@ -259,14 +265,18 @@ function update(elapsedTime) {
 
   // TODO: Update the game objects
   console.log("len: ", asteroids.length);
-  if(asteroids.length == 31){
+  if(score >= 20  && level == 1 || asteroids.length >= 23 && level == 1){
+    level = 2;
+    game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
     axisList = [];
     var level2 = Asteroid.level2(canvas);
     asteroids = level2.asteroids;
     axisList = level2.axisList;
   }
-  if(asteroids.length == 91){
+  if(score >= 40 && level == 2 || asteroids.length >= 90 && level == 2){
+    level = 3;
+    game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
     axisList = [];
     var level3 = Asteroid.level2(canvas);
