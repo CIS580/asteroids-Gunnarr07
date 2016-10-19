@@ -3,73 +3,65 @@
 /**
  * @module exports the asteroid class
  */
-module.exports = exports = Asteroid;
-
-/**
- * @constructor Asteroid
- * Create a new Asteroid object
- * @param {position} position object specifying an x and y
- */
-function Asteroid(position, canvas) {
-    this.worldWidth = canvas.width;
-    this.worldHeight = canvas.height;
-    this.position = {
-        x: position.x,
-        y: position.y
-    };
-    this.mass = Math.random() * (20-10) + 10;
-    this.velocity = {
-        x: Math.random() * (2 + 2) - 2,
-        y: Math.random() * (2 + 2) - 2
-    };
-    this.mass = Math.random() * (10 - 5) + 5; // Random mass between min (inclusive) and max (exclusive)
-    this.astroids = [];
-    this.astroidL1 = new Image();
-    this.astroidL1.src = 'assets/c10008.png';
-    this.astroids.push(this.astroidL1);
-    this.astroidL2 = new Image();
-    this.astroidL2.src = 'assets/c30008.png';
-    this.astroids.push(this.astroidL2);
-    this.astroidL3 = new Image();
-    this.astroidL3.src = 'assets/c40009.png';
-    this.astroids.push(this.astroidL3);
-
-    this.astroid = this.astroids[Math.floor(Math.random() * this.astroids.length)];
+module.exports = exports = {
+    level1: level1,
+    level2: level2
 }
 
-/**
- * @function updates the Asteroid object
- * {DOMHighResTimeStamp} time the elapsed time since the last frame
- */
-Asteroid.prototype.update = function(time) {
-    // Apply velocity
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
+var asteroids = [];
+var asteroidTypes = []
+var axisList = [];
+var asteroid1 = new Image();
+asteroid1.src ='assets/c10008.png';
+asteroidTypes.push(asteroid1);
+var asteroid2 = new Image();
+asteroid2.src = 'assets/c30008.png';
+asteroidTypes.push(asteroid2);
+var asteroid3 = new Image();
+asteroid3.src = 'assets/c40009.png';
+asteroidTypes.push(asteroid3);
 
-    // Wrap around the screen
-    if(this.position.x < 0) this.position.x += this.worldWidth;
-    if(this.position.x > this.worldWidth) this.position.x -= this.worldWidth;
-    if(this.position.y < 0) this.position.y += this.worldHeight;
-    if(this.position.y > this.worldHeight) this.position.y -= this.worldHeight;
+function level1(canvas) {
+    for(var i = 0; i < 5; i++) {
+        asteroids.push({
+            asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
+            position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
+            mass: Math.random() * (20-10) + 10,
+            velocity: { x: Math.random() * (2 + 2) - 2, y: Math.random() * (2 + 2) - 2 },
+            width: 64,
+            height: 64
+        });
+        axisList.push(asteroids[i]);
+    }
+    return {asteroids: asteroids, axisList: axisList};
 }
 
-/**
- * @function renders the Asteroid into the provided context
- * {DOMHighResTimeStamp} time the elapsed time since the last frame
- * {CanvasRenderingContext2D} ctx the context to render into
- */
-Asteroid.prototype.render = function(time, ctx) {
-    ctx.drawImage(
-        // Image
-        this.astroid,
-        // Source
-        80, 50, 160, 160,
-        // Destination
-        this.position.x, this.position.y, 64, 64
-    );
-    ctx.beginPath();
-    ctx.strokeStyle = 'grey';
-    // ctx.arc(100,75,50,0,2*Math.PI);
-    ctx.arc(this.position.x + 32, this.position.y + 32, 32, 0, 2*Math.PI);
-    ctx.stroke();
+function level2(canvas) {
+    for(var i = 0; i < 10; i++) {
+        asteroids.push({
+            asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
+            position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
+            mass: Math.random() * (20-10) + 10,
+            velocity: { x: Math.random() * (2 + 2) - 2, y: Math.random() * (2 + 2) - 2 },
+            width: 64,
+            height: 64
+        });
+        axisList.push(asteroids[i]);
+    }
+    return {asteroids: asteroids, axisList: axisList};
+}
+
+function level3(canvas) {
+    for(var i = 0; i < 10; i++) {
+        asteroids.push({
+            asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
+            position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
+            mass: Math.random() * (20-10) + 10,
+            velocity: { x: Math.random() * (2 + 2) - 2, y: Math.random() * (2 + 2) - 2 },
+            width: 64,
+            height: 64
+        });
+        axisList.push(asteroids[i]);
+    }
+    return {asteroids: asteroids, axisList: axisList};
 }
