@@ -31,10 +31,6 @@ function Laser(position, velocity, angle) { //position, velocity, angle
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Laser.prototype.update = function(time) {
-
-    // this.position.x += 0;
-    // this.position.y -= 3;
-
     // Apply velocity
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
@@ -48,8 +44,6 @@ Laser.prototype.update = function(time) {
 Laser.prototype.render = function(time, ctx) {
     ctx.save();
     ctx.fillStyle = "red";
-    //ctx.translate(this.position.x, this.position.y);
-    //ctx.rotate(-this.angle);
     ctx.fillRect(this.position.x, this.position.y , this.width, this.height);
     ctx.restore();
 }

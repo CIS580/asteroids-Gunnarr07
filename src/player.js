@@ -14,7 +14,7 @@ module.exports = exports = Player;
  * Creates a new player object
  * @param {Postition} position object specifying an x and y
  */
-function Player(position, canvas, lasers) {
+function Player(position, canvas, lasers, game) {
   this.worldWidth = canvas.width;
   this.worldHeight = canvas.height;
   this.state = "idle";
@@ -32,6 +32,7 @@ function Player(position, canvas, lasers) {
   this.steerLeft = false;
   this.steerRight = false;
   this.shooting = false;
+  this.game = game;
   this.lasers = [];
   this.shield = false;
   var shootLaser = new Audio();
@@ -59,6 +60,16 @@ function Player(position, canvas, lasers) {
         break;
       case 'g':
         self.shield = true;
+        break;
+      case 'Escape':
+        if (self.game.paused) {
+            self.game.idPaused.style.display = "none";
+            self.game.paused = false;
+        }
+        else {
+            self.game.paused = true;
+            self.game.idPaused.style.display = "block";
+        }
         break;
     }
   }
@@ -157,8 +168,8 @@ Player.prototype.render = function(time, ctx) {
 
   ctx.restore();
 
-  ctx.fillStyle ='red'
-  ctx.fillRect(this.position.x, this.position.y , 5, 5);
+  // ctx.fillStyle ='red'
+  // ctx.fillRect(this.position.x, this.position.y , 5, 5);
 
   if(this.shield) {
     ctx.beginPath();

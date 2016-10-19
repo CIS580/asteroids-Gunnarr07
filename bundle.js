@@ -18,7 +18,7 @@ var explosion = new Audio();
 explosion.src = 'assets/Explosion.wav';
 var explosion2 = new Audio();
 explosion2.src = 'assets/Explosion2.wav';
-var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas, lasers);
+var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas, lasers, game);
 
 
 var background = new Image();
@@ -266,7 +266,7 @@ function update(elapsedTime) {
 
   // TODO: Update the game objects
   console.log("len: ", asteroids.length);
-  if(score >= 20  && level == 1 || asteroids.length >= 23 && level == 1){
+  if(score >= 40  && level == 1 || asteroids.length >= 90 && level == 1){
     level = 2;
     game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
@@ -275,7 +275,7 @@ function update(elapsedTime) {
     asteroids = level2.asteroids;
     axisList = level2.axisList;
   }
-  if(score >= 40 && level == 2 || asteroids.length >= 90 && level == 2){
+  if(score >= 100 && level == 2 || asteroids.length >= 180 && level == 2){
     level = 3;
     game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
@@ -348,7 +348,7 @@ asteroidTypes.push(asteroid3);
  * The first round of asteriods
  */
 function level1(canvas) {
-    for(var i = 0; i < 5; i++) {
+    for(var i = 0; i < 10; i++) {
         asteroids.push({
             asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
             position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
@@ -366,7 +366,7 @@ function level1(canvas) {
  * The second round of asteriods
  */
 function level2(canvas) {
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 15; i++) {
         asteroids.push({
             asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
             position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
@@ -384,7 +384,7 @@ function level2(canvas) {
  * The third round of asteriods
  */
 function level3(canvas) {
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 20; i++) {
         asteroids.push({
             asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
             position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
@@ -428,6 +428,7 @@ function Game(screen, updateFunction, renderFunction) {
   this.oldTime = performance.now();
   this.paused = false;
   this.stats = document.getElementById('stats');
+  this.idPaused = document.getElementById('id_paused');
 }
 
 /**
@@ -490,10 +491,6 @@ function Laser(position, velocity, angle) { //position, velocity, angle
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
  */
 Laser.prototype.update = function(time) {
-
-    // this.position.x += 0;
-    // this.position.y -= 3;
-
     // Apply velocity
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
@@ -507,8 +504,6 @@ Laser.prototype.update = function(time) {
 Laser.prototype.render = function(time, ctx) {
     ctx.save();
     ctx.fillStyle = "red";
-    //ctx.translate(this.position.x, this.position.y);
-    //ctx.rotate(-this.angle);
     ctx.fillRect(this.position.x, this.position.y , this.width, this.height);
     ctx.restore();
 }
@@ -529,7 +524,7 @@ module.exports = exports = Player;
  * Creates a new player object
  * @param {Postition} position object specifying an x and y
  */
-function Player(position, canvas, lasers) {
+function Player(position, canvas, lasers, game) {
   this.worldWidth = canvas.width;
   this.worldHeight = canvas.height;
   this.state = "idle";
@@ -547,6 +542,7 @@ function Player(position, canvas, lasers) {
   this.steerLeft = false;
   this.steerRight = false;
   this.shooting = false;
+  this.game = game;
   this.lasers = [];
   this.shield = false;
   var shootLaser = new Audio();
@@ -574,6 +570,16 @@ function Player(position, canvas, lasers) {
         break;
       case 'g':
         self.shield = true;
+        break;
+      case 'Escape':
+        if (self.game.paused) {
+            self.game.idPaused.style.display = "none";
+            self.game.paused = false;
+        }
+        else {
+            self.game.paused = true;
+            self.game.idPaused.style.display = "block";
+        }
         break;
     }
   }
@@ -672,8 +678,8 @@ Player.prototype.render = function(time, ctx) {
 
   ctx.restore();
 
-  ctx.fillStyle ='red'
-  ctx.fillRect(this.position.x, this.position.y , 5, 5);
+  // ctx.fillStyle ='red'
+  // ctx.fillRect(this.position.x, this.position.y , 5, 5);
 
   if(this.shield) {
     ctx.beginPath();

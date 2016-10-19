@@ -25,7 +25,7 @@ asteroidTypes.push(asteroid3);
  * The first round of asteriods
  */
 function level1(canvas) {
-    for(var i = 0; i < 5; i++) {
+    for(var i = 0; i < 10; i++) {
         asteroids.push({
             asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
             position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
@@ -43,7 +43,7 @@ function level1(canvas) {
  * The second round of asteriods
  */
 function level2(canvas) {
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 15; i++) {
         asteroids.push({
             asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
             position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},
@@ -61,7 +61,7 @@ function level2(canvas) {
  * The third round of asteriods
  */
 function level3(canvas) {
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 20; i++) {
         asteroids.push({
             asteriod: asteroidTypes[Math.floor(Math.random() * asteroidTypes.length)],
             position: {x:Math.floor(Math.random() * (canvas.width - 1)), y:  Math.floor(Math.random() * (canvas.height - 1))},

@@ -28,6 +28,7 @@ function Game(screen, updateFunction, renderFunction) {
   this.oldTime = performance.now();
   this.paused = false;
   this.stats = document.getElementById('stats');
+  this.idPaused = document.getElementById('id_paused');
 }
 
 /**

@@ -17,7 +17,7 @@ var explosion = new Audio();
 explosion.src = 'assets/Explosion.wav';
 var explosion2 = new Audio();
 explosion2.src = 'assets/Explosion2.wav';
-var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas, lasers);
+var player = new Player({x: canvas.width/2, y: canvas.height/2}, canvas, lasers, game);
 
 
 var background = new Image();
@@ -265,7 +265,7 @@ function update(elapsedTime) {
 
   // TODO: Update the game objects
   console.log("len: ", asteroids.length);
-  if(score >= 20  && level == 1 || asteroids.length >= 23 && level == 1){
+  if(score >= 40  && level == 1 || asteroids.length >= 90 && level == 1){
     level = 2;
     game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
@@ -274,7 +274,7 @@ function update(elapsedTime) {
     asteroids = level2.asteroids;
     axisList = level2.axisList;
   }
-  if(score >= 40 && level == 2 || asteroids.length >= 90 && level == 2){
+  if(score >= 100 && level == 2 || asteroids.length >= 180 && level == 2){
     level = 3;
     game.stats.innerHTML = "Score: " + score + " Level: " + level;
     asteroids = [];
