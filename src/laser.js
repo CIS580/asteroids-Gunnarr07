@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module exports the asteroid class
+ * @module exports the laser class
  */
 module.exports = exports = Laser;
 
